@@ -391,8 +391,10 @@ template <typename T, std::size_t MaxSize> class StackVector final
 
         --size_;
 
-        T *element = static_cast<T *>(static_cast<void *>(&data_[size_ * sizeof(T)]));
-        element->~T();
+        if constexpr (!std::is_trivially_destructible_v<T>)
+        {
+            static_cast<T *>(static_cast<void *>(&data_[size_ * sizeof(T)]))->~T();
+        }
     }
 
     void resize(const std::size_t new_size, const T &value = T{})
@@ -413,12 +415,15 @@ template <typename T, std::size_t MaxSize> class StackVector final
 
         else
         {
-            // Destruct excess elements if the new size is smaller than the current size
-            if (new_size < size_)
+            if constexpr (!std::is_trivially_destructible_v<T>)
             {
-                for (std::size_t i = new_size; i < size_; ++i)
+                // Destruct excess elements if the new size is smaller than the current size
+                if (new_size < size_)
                 {
-                    static_cast<T *>(static_cast<void *>(&data_[i * sizeof(T)]))->~T();
+                    for (std::size_t i = new_size; i < size_; ++i)
+                    {
+                        static_cast<T *>(static_cast<void *>(&data_[i * sizeof(T)]))->~T();
+                    }
                 }
             }
         }
@@ -429,10 +434,12 @@ template <typename T, std::size_t MaxSize> class StackVector final
     inline void clear() noexcept
     {
         // Explicitly call the destructor for each constructed element
-        for (std::size_t i = 0U; i < size_; ++i)
+        if constexpr (!std::is_trivially_destructible_v<T>)
         {
-            T *element = static_cast<T *>(static_cast<void *>(&data_[i * sizeof(T)]));
-            element->~T();
+            for (std::size_t i = 0U; i < size_; ++i)
+            {
+                static_cast<T *>(static_cast<void *>(&data_[i * sizeof(T)]))->~T();
+            }
         }
         size_ = 0U;
     }
