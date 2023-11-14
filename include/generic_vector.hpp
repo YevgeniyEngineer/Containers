@@ -82,7 +82,7 @@ class GenericVector : public AllocationPolicy<T, MaxSize>
     }
 
     // Move assignment operator
-    GenericVector &operator=(GenericVector &&other) noexcept
+    GenericVector &operator=(GenericVector &&other) noexcept(noexcept(allocate(0U, std::move(other[0U]))))
     {
         if (this != &other)
         {
@@ -424,23 +424,20 @@ class GenericVector : public AllocationPolicy<T, MaxSize>
             throw std::runtime_error("Exceeds maximum size.");
         }
 
-        // Construct new elements if the new size is greater than the current size
-        if (new_size > size_)
+        if (new_size < size_)
+        {
+            for (std::size_t i = new_size; i < size_; ++i)
+            {
+                deallocate(i);
+            }
+            size_ = new_size;
+        }
+        else if (new_size > size_)
         {
             for (std::size_t i = size_; i < new_size; ++i)
             {
-                allocate(size_, value);
-            }
-        }
-        else
-        {
-            // Destruct excess elements if the new size is smaller than the current size
-            if (new_size < size_)
-            {
-                for (std::size_t i = new_size; i < size_; ++i)
-                {
-                    deallocate(i);
-                }
+                allocate(i, value);
+                ++size_;
             }
         }
 
