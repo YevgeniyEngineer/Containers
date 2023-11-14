@@ -4,7 +4,9 @@
 #include "heap_allocation_policy.hpp"
 #include "stack_allocation_policy.hpp"
 
+#include <cstdint>
 #include <stdexcept>
+#include <type_traits>
 
 namespace containers
 {
@@ -72,7 +74,8 @@ class GenericVector : public AllocationPolicy<T, MaxSize>
     }
 
     // Move constructor
-    GenericVector(GenericVector &&other) noexcept : size_{other.size_}
+    GenericVector(GenericVector &&other) noexcept(noexcept(this->allocate(0U, std::move(other[0U]))))
+        : size_{other.size_}
     {
         for (std::size_t i = 0; i < other.size_; ++i)
         {
@@ -82,7 +85,7 @@ class GenericVector : public AllocationPolicy<T, MaxSize>
     }
 
     // Move assignment operator
-    GenericVector &operator=(GenericVector &&other) noexcept(noexcept(allocate(0U, std::move(other[0U]))))
+    GenericVector &operator=(GenericVector &&other) noexcept(noexcept(this->allocate(0U, std::move(other[0U]))))
     {
         if (this != &other)
         {

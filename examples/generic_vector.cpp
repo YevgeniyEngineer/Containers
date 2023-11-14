@@ -66,6 +66,27 @@ int main()
             std::cout << element.getData() << " ";
         }
         std::cout << std::endl;
+
+        // Test move constructor
+        containers::StackVector<ResourceManagingType, 5> stack_vector_2{
+            containers::StackVector<ResourceManagingType, 5>{}};
+
+        // Test move assignment operator
+        stack_vector_2 = std::move(stack_vector);
+
+        std::cout << "After move semantics (v1): ";
+        for (const auto &element : stack_vector)
+        {
+            std::cout << element.getData() << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "After move semantics (v2): ";
+        for (const auto &element : stack_vector_2)
+        {
+            std::cout << element.getData() << " ";
+        }
+        std::cout << std::endl;
     }
 
     std::cout << std::endl;
@@ -128,6 +149,27 @@ int main()
         heap_vector.resize(2, ResourceManagingType("Resize"));
         std::cout << "After resizing to 2: ";
         for (const auto &element : heap_vector)
+        {
+            std::cout << element.getData() << " ";
+        }
+        std::cout << std::endl;
+
+        // Test move constructor
+        containers::HeapVector<ResourceManagingType, 5> heap_vector_2{
+            containers::HeapVector<ResourceManagingType, 5>{}};
+
+        // Test move assignment operator
+        heap_vector_2 = std::move(heap_vector);
+
+        std::cout << "After move semantics (v1): ";
+        for (const auto &element : heap_vector)
+        {
+            std::cout << element.getData() << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "After move semantics (v2): ";
+        for (const auto &element : heap_vector_2)
         {
             std::cout << element.getData() << " ";
         }

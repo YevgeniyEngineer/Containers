@@ -36,6 +36,11 @@ template <typename T, std::size_t MaxSize> class HeapAllocationPolicy
     {
         return data_[index];
     }
+
+    inline const T &getData(const std::size_t index) const noexcept
+    {
+        return data_[index];
+    }
 };
 } // namespace containers
 

@@ -26,6 +26,11 @@ template <typename T, std::size_t MaxSize> class StackAllocationPolicy
     {
         return *static_cast<T *>(static_cast<void *>(&data_[index * sizeof(T)]));
     }
+
+    inline const T &getData(const std::size_t index) const noexcept
+    {
+        return *static_cast<T *>(static_cast<void *>(&data_[index * sizeof(T)]));
+    }
 };
 } // namespace containers
 
