@@ -15,3 +15,6 @@ target_include_directories(${PROJECT_NAME}
 # Examples
 add_executable(stack_vector ${CMAKE_CURRENT_SOURCE_DIR}/examples/stack_vector.cpp)
 target_link_libraries(stack_vector PRIVATE containers)
+
+add_executable(generic_vector ${CMAKE_CURRENT_SOURCE_DIR}/examples/generic_vector.cpp)
+target_link_libraries(generic_vector PRIVATE containers)
