@@ -1,5 +1,6 @@
 #include "reserved_pool_allocator.hpp"
 
+#include <chrono>
 #include <cmath>
 #include <exception>
 #include <iostream>
@@ -97,6 +98,61 @@ int main()
 
         heap_vector.clear();
         std::cout << "Number of element after clearing: " << heap_vector.size() << std::endl;
+    }
+    catch (const std::exception &ex)
+    {
+        std::cerr << "Exception: " << ex.what() << std::endl;
+        return 1;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown exception!" << std::endl;
+        return 2;
+    }
+
+    try
+    {
+        static constexpr std::size_t MAX_SIZE = 1000'000;
+
+        const auto t1 = std::chrono::steady_clock::now();
+
+        std::vector<double, containers::ReservedPoolAllocator<double, MAX_SIZE, containers::HeapStorage>> heap_vector;
+        heap_vector.reserve(MAX_SIZE);
+        for (int i = 0; i < MAX_SIZE; ++i)
+        {
+            heap_vector.push_back(static_cast<double>(i));
+        }
+
+        const auto t2 = std::chrono::steady_clock::now();
+
+        std::vector<double> vector;
+        vector.reserve(MAX_SIZE);
+        for (int i = 0; i < MAX_SIZE; ++i)
+        {
+            vector.push_back(static_cast<double>(i));
+        }
+
+        const auto t3 = std::chrono::steady_clock::now();
+
+        std::vector<double, containers::ReservedPoolAllocator<double, MAX_SIZE, containers::StackStorage>> stack_vector;
+        stack_vector.reserve(MAX_SIZE);
+        for (int i = 0; i < MAX_SIZE; ++i)
+        {
+            stack_vector.push_back(static_cast<double>(i));
+        }
+
+        const auto t4 = std::chrono::steady_clock::now();
+
+        std::cout << std::endl;
+
+        std::cout << "Allocation of heap_vector() [microsec]: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << std::endl;
+
+        std::cout << "Allocation of vector() [microsec]: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() << std::endl;
+
+        std::cout << "Allocation of stack_vector() [microsec]: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count() << std::endl;
     }
     catch (const std::exception &ex)
     {

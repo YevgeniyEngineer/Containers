@@ -74,8 +74,6 @@ template <typename T, std::size_t MaxSize> class HeapStorage
     {
         // Free the allocated memory
         std::free(buffer_);
-
-        buffer_ = nullptr;
     }
 
     inline T *buffer() noexcept
@@ -129,7 +127,7 @@ class ReservedPoolAllocator
         return result;
     }
 
-    void deallocate(T *, std::size_t)
+    void deallocate(T * /* p */, std::size_t /* n */)
     {
         // Deallocate method is a no-op for both stack and heap in this design
     }
