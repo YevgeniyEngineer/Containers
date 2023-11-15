@@ -42,6 +42,9 @@ int main()
             std::cout << num << " ";
         }
         std::cout << std::endl;
+
+        stack_vector.clear();
+        std::cout << "Number of element after clearing: " << stack_vector.size() << std::endl;
     }
     catch (const std::exception &ex)
     {
@@ -91,6 +94,9 @@ int main()
             std::cout << num << " ";
         }
         std::cout << std::endl;
+
+        heap_vector.clear();
+        std::cout << "Number of element after clearing: " << heap_vector.size() << std::endl;
     }
     catch (const std::exception &ex)
     {

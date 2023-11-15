@@ -8,8 +8,6 @@
 #include <new>
 #include <type_traits>
 
-#include <iostream>
-
 namespace containers
 {
 struct StackPolicy
@@ -136,12 +134,12 @@ class ReservedPoolAllocator
         // Deallocate method is a no-op for both stack and heap in this design
     }
 
-    template <typename U> void construct(pointer p, U &&value)
+    template <typename U> inline void construct(pointer p, U &&value)
     {
         new (p) T{std::forward<U>(value)};
     }
 
-    void destroy(pointer p)
+    inline void destroy(pointer p)
     {
         p->~T();
     }
