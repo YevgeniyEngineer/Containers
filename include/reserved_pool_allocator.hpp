@@ -25,7 +25,7 @@ template <typename T, std::size_t MaxSize> class StackStorage
   public:
     using Policy = StackPolicy;
 
-    StackStorage() = default;
+    constexpr StackStorage() = default;
     ~StackStorage() = default;
 
     // Delete copy and move constructors and assignment operators to prevent accidental moving of the buffer.
@@ -34,12 +34,12 @@ template <typename T, std::size_t MaxSize> class StackStorage
     StackStorage(StackStorage &&) noexcept = delete;
     StackStorage &operator=(StackStorage &&) noexcept = delete;
 
-    inline T *buffer() noexcept
+    constexpr inline T *buffer() noexcept
     {
         return static_cast<T *>(static_cast<void *>(buffer_));
     }
 
-    inline const T *buffer() const noexcept
+    constexpr inline const T *buffer() const noexcept
     {
         return static_cast<T *>(static_cast<void *>(buffer_));
     }
@@ -106,7 +106,7 @@ class ReservedPoolAllocator
     using const_reference = const T &;
     using value_type = T;
 
-    ReservedPoolAllocator() : storage_{}, used_{0U}
+    constexpr ReservedPoolAllocator() : storage_{}, used_{0U}
     {
     }
 
@@ -122,12 +122,12 @@ class ReservedPoolAllocator
             throw std::bad_alloc();
         }
 
-        T *result = storage_.buffer() + used_;
+        T *result = storage_.buffer() + static_cast<std::ptrdiff_t>(used_);
         used_ += n;
         return result;
     }
 
-    void deallocate(T * /* p */, std::size_t /* n */)
+    constexpr void deallocate(T * /* p */, std::size_t /* n */)
     {
         // Deallocate method is a no-op for both stack and heap in this design
     }
