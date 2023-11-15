@@ -18,3 +18,6 @@ target_link_libraries(stack_vector PRIVATE containers)
 
 add_executable(generic_vector ${CMAKE_CURRENT_SOURCE_DIR}/examples/generic_vector.cpp)
 target_link_libraries(generic_vector PRIVATE containers)
+
+add_executable(reserved_pool_allocator ${CMAKE_CURRENT_SOURCE_DIR}/examples/reserved_pool_allocator.cpp)
+target_link_libraries(reserved_pool_allocator PRIVATE containers)
