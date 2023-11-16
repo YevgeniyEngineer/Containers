@@ -21,3 +21,6 @@ target_link_libraries(generic_vector PRIVATE containers)
 
 add_executable(reserved_pool_allocator ${CMAKE_CURRENT_SOURCE_DIR}/examples/reserved_pool_allocator.cpp)
 target_link_libraries(reserved_pool_allocator PRIVATE containers)
+
+add_executable(circular_buffer ${CMAKE_CURRENT_SOURCE_DIR}/examples/circular_buffer.cpp)
+target_link_libraries(circular_buffer PRIVATE containers)
