@@ -1,27 +1,12 @@
 #ifndef CONTAINERS_CIRCULAR_BUFFER_HPP
 #define CONTAINERS_CIRCULAR_BUFFER_HPP
 
-#include <functional>
 #include <memory>
 #include <stdexcept>
-#include <type_traits>
 #include <utility>
-#include <vector>
 
 namespace containers
 {
-template <typename T, typename Arg, typename = void> struct is_invocable : std::false_type
-{
-};
-
-template <typename T, typename Arg>
-struct is_invocable<T, Arg, std::void_t<decltype(std::declval<T>()(std::declval<Arg>()))>> : std::true_type
-{
-};
-
-// Convenience variable template
-template <typename T, typename Arg> constexpr bool is_invocable_v = is_invocable<T, Arg>::value;
-
 template <typename T, std::size_t Size> class CircularBuffer
 {
     static_assert(((Size % 2U) == 0U), "CircularBuffer's Size must be a power of 2.");
