@@ -77,5 +77,23 @@ int main()
         std::cout << "Failed to emplace second element." << std::endl;
     }
 
+    containers::CircularBuffer<int, 4> buffer_3{containers::OverflowBehaviour::OVERFLOW_OLDEST};
+
+    // Fill the buffer
+    for (int i = 0; i < 4; ++i)
+    {
+        buffer_3.push(i);
+    }
+
+    // This push will overwrite the oldest element (0) without throwing an exception
+    buffer_3.push(5);
+    buffer_3.push(10);
+
+    // Print elements in buffer 3
+    while (buffer_3.try_pop(value))
+    {
+        std::cout << value << std::endl;
+    }
+
     return 0;
 }

@@ -1,12 +1,20 @@
 #ifndef CONTAINERS_CIRCULAR_BUFFER_HPP
 #define CONTAINERS_CIRCULAR_BUFFER_HPP
 
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <utility>
 
 namespace containers
 {
+// Specify the default behaviour if buffer overflows
+enum class OverflowBehaviour : std::uint8_t
+{
+    THROW_EXCEPTION,
+    OVERFLOW_OLDEST
+};
+
 template <typename T, std::size_t Size> class CircularBuffer
 {
     static_assert(((Size % 2U) == 0U), "CircularBuffer's Size must be a power of 2.");
@@ -17,7 +25,8 @@ template <typename T, std::size_t Size> class CircularBuffer
 
   public:
     // Default constructor
-    CircularBuffer() : buffer_{std::make_unique<T[]>(SIZE)}, head_{0U}, tail_{0U}, count_{0U}
+    CircularBuffer(OverflowBehaviour behaviour = OverflowBehaviour::THROW_EXCEPTION)
+        : buffer_{std::make_unique<T[]>(SIZE)}, head_{0U}, tail_{0U}, count_{0U}, overflow_behaviour_{behaviour}
     {
     }
 
@@ -25,7 +34,16 @@ template <typename T, std::size_t Size> class CircularBuffer
     {
         if (full())
         {
-            throw std::runtime_error("CircularBuffer is full.");
+            if (OverflowBehaviour::THROW_EXCEPTION == overflow_behaviour_)
+            {
+                throw std::runtime_error("CircularBuffer is full.");
+            }
+            else
+            {
+                // Overwrite the oldest element (at head_)
+                head_ = (head_ + 1U) & LAST_INDEX;
+                --count_;
+            }
         }
 
         buffer_[tail_] = std::forward<U>(value);
@@ -53,7 +71,16 @@ template <typename T, std::size_t Size> class CircularBuffer
     {
         if (full())
         {
-            throw std::runtime_error("CircularBuffer is full.");
+            if (OverflowBehaviour::THROW_EXCEPTION == overflow_behaviour_)
+            {
+                throw std::runtime_error("CircularBuffer is full.");
+            }
+            else
+            {
+                // Overwrite the oldest element (at head_)
+                head_ = (head_ + 1U) & LAST_INDEX;
+                --count_;
+            }
         }
 
         new (&buffer_[tail_]) T{std::forward<Args>(args)...};
@@ -148,6 +175,9 @@ template <typename T, std::size_t Size> class CircularBuffer
     std::size_t head_;
     std::size_t tail_;
     std::size_t count_;
+
+    // Behaviour when the buffer is full
+    OverflowBehaviour overflow_behaviour_;
 };
 } // namespace containers
 
